@@ -29,9 +29,6 @@ contract QuickSwapPair is QuickSwapERC20 {
     address public token1;
     QuickSwapSlippageToken public stoken;
 
-    uint128 private token0Slippage;
-    uint128 private token1Slippage;
-
     uint224 private virtualPrice; // token0 virtual price, uses single storage slot
     uint32 private lastPriceTime; // the latest exchange time
 
@@ -55,11 +52,6 @@ contract QuickSwapPair is QuickSwapERC20 {
         _reserve0 = reserve0;
         _reserve1 = reserve1;
         _blockTimestampLast = blockTimestampLast;
-    }
-
-    function getSlippageAmount() public view returns (uint128 _token0Slippage, uint128 _token1Slippage) {
-        _token0Slippage = token0Slippage;
-        _token1Slippage = token1Slippage;
     }
 
     function getVirtualPrice() public view returns (uint224 _virtualPrice, uint32 _lastPriceTime) {
@@ -167,10 +159,8 @@ contract QuickSwapPair is QuickSwapERC20 {
     // this low-level function should be called from a contract which performs important safety checks
     function burn(address to) external lock returns (uint256 amount0, uint256 amount1) {
         (uint112 _reserve0, uint112 _reserve1, ) = getReserves(); // gas savings
-        // (uint256 _qlcForLiquidityProvider, ) = getQLCAmount();
         address _token0 = token0; // gas savings
         address _token1 = token1; // gas savings
-        // address _tokenQLC = IQuickSwapFactory(factory).tokenQLC();
         uint256 balance0 = IERC20(_token0).balanceOf(address(this));
         uint256 balance1 = IERC20(_token1).balanceOf(address(this));
 
@@ -180,20 +170,14 @@ contract QuickSwapPair is QuickSwapERC20 {
             uint256 _totalSupply = totalSupply; // gas savings, must be defined here since totalSupply can update in _mintFee
             amount0 = liquidity.mul(balance0) / _totalSupply; // using balances ensures pro-rata distribution
             amount1 = liquidity.mul(balance1) / _totalSupply; // using balances ensures pro-rata distribution
-            // amount2 = liquidity.mul(_qlcForLiquidityProvider) / _totalSupply;
             require(amount0 > 0 && amount1 > 0, 'QuickSwap: INSUFFICIENT_LIQUIDITY_BURNED');
             _burn(address(this), liquidity);
         }
         _safeTransfer(_token0, to, amount0);
         _safeTransfer(_token1, to, amount1);
-        // if (amount2 > 0) {
-        //     _qlcForLiquidityProvider = _qlcForLiquidityProvider.sub(amount2);
-        //     _safeTransfer(_tokenQLC, to, amount2);
-        // }
         balance0 = IERC20(_token0).balanceOf(address(this));
         balance1 = IERC20(_token1).balanceOf(address(this));
 
-        // qlcForLiquidityProvider = uint128(_qlcForLiquidityProvider);
         _update(balance0, balance1, _reserve0, _reserve1);
         if (feeOn) kLast = uint256(reserve0).mul(reserve1); // reserve0 and reserve1 are up-to-date
         emit Burn(msg.sender, amount0, amount1, to);
@@ -392,11 +376,6 @@ contract QuickSwapPair is QuickSwapERC20 {
             uint256 slippageExtra = amountOutReal.sub(amountOutMarket);
             uint256 halfSlippage = slippageExtra / 2;
             amountOut = amountOutReal.sub(halfSlippage);
-            if (path[1] == _token0) {
-                token0Slippage = uint128(_token0Slippage.add(halfSlippage));
-            } else {
-                token1Slippage = uint128(_token1Slippage.add(halfSlippage));
-            }
         }
 
         if (ifmint == true) {
@@ -428,11 +407,6 @@ contract QuickSwapPair is QuickSwapERC20 {
             (uint256 _token0Slippage, uint256 _token1Slippage) = getSlippageAmount();
             uint256 slippageExtra = amountInMarket.sub(amountInReal);
             extra = slippageExtra / 2;
-            if (path[0] == _token0) {
-                token0Slippage = uint128(_token0Slippage.add(extra));
-            } else {
-                token1Slippage = uint128(_token1Slippage.add(extra));
-            }
         }
 
         if (ifmint == true) {

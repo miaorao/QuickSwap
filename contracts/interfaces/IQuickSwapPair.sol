@@ -43,7 +43,6 @@ interface IQuickSwapPair {
     function price0CumulativeLast() external view returns (uint);
     function price1CumulativeLast() external view returns (uint);
     function kLast() external view returns (uint);
-    function getSlippageAmount() external view returns (uint128 _token0Slippage, uint128 _token1Slippage);
 
     function mint(address to) external returns (uint liquidity);
     function burn(address to) external returns (uint amount0, uint amount1);
