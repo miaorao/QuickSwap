@@ -18,7 +18,7 @@ contract QuickSwapSlippageToken {
     event Transfer(address indexed from, address indexed to, uint value);
 
     modifier onlyOwner() {
-        require(_owner == msg.sender, 'Slippage Token: Not Owner');
+        require(_owner == msg.sender, 'SlippageToken: Not Owner');
         _;
     }
 

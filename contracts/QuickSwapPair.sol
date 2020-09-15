@@ -372,7 +372,6 @@ contract QuickSwapPair is QuickSwapERC20 {
 
         // arbitrager
         if (amountOutReal > amountOutMarket) {
-            (uint256 _token0Slippage, uint256 _token1Slippage) = getSlippageAmount();
             uint256 slippageExtra = amountOutReal.sub(amountOutMarket);
             uint256 halfSlippage = slippageExtra / 2;
             amountOut = amountOutReal.sub(halfSlippage);
@@ -387,7 +386,7 @@ contract QuickSwapPair is QuickSwapERC20 {
     }
 
     function dealSlippageWithOut(address[] calldata path, uint256 amountOut, address to, bool ifmint) external lock returns (uint256 extra) {
-        require(path.length == 2, 'Quick Swap: INVALID_PATH');
+        require(path.length == 2, 'QuickSwap: INVALID_PATH');
         address _token0 = token0;
         uint256 amountInReal;
         uint256 amountInMarket;
@@ -404,7 +403,6 @@ contract QuickSwapPair is QuickSwapERC20 {
 
         // arbitrager
         if (amountInReal < amountInMarket) {
-            (uint256 _token0Slippage, uint256 _token1Slippage) = getSlippageAmount();
             uint256 slippageExtra = amountInMarket.sub(amountInReal);
             extra = slippageExtra / 2;
         }
