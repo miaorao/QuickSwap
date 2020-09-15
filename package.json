@@ -2,28 +2,43 @@
   "name": "quickswap",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
+  "repository": "git@github.com:qlcchain/QuickSwap.git",
+  "author": "QLC Chain Team",
+  "keywords": [
+    "ethereum",
+    "qlcchain",
+    "DeFi",
+    "QuickSwap"
+  ],
   "scripts": {
     "test": "npx truffle test",
     "compile": "npx truffle compile",
+    "coverage": "COVERAGE=true npx truffle run coverage",
     "deploy": "npx truffle migrate --network rinkeby",
     "start": "npx ganache-cli -l 10000038 -i 1234 -e 100000 -a 10 -u 0 -g 1000000000 --allowUnlimitedContractSize -m \"$HDWALLET_MNEMONIC\"",
     "version": "npx truffle version",
+    "docs": "npx solidity-docgen -o docs -i contracts -s single",
     "extract-abis": "npx truffle-extract -o .abis",
     "solhint": "npx solhint -f table contracts/**/*.sol",
-    "prettier:solidity": "npx prettier --write contracts/**/*.sol"
+    "prettier:solidity": "npx prettier --write contracts/**/*.sol",
+    "prettier:js": "npx prettier --write test/**/*.js"
   },
   "devDependencies": {
     "@openzeppelin/test-helpers": "^0.5.6",
-    "@openzeppelin/cli": "^2.8.2",
+    "@truffle/core": "^5.1.44",
     "@truffle/hdwallet-provider": "^1.0.43",
     "eth-gas-reporter": "^0.2.17",
     "ganache-cli": "^6.10.1",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "mocha-junit-reporter": "^2.0.0",
     "prettier": "^2.1.1",
     "prettier-plugin-solidity": "^1.0.0-alpha.56",
     "solc": "0.7.0",
     "solhint": "^3.2.0",
+    "solidity-coverage": "^0.7.10",
+    "solidity-docgen": "^0.5.6",
     "solhint-plugin-prettier": "^0.0.5",
     "truffle": "5.1.42",
     "truffle-assertions": "^0.9.2",
@@ -31,4 +46,3 @@
     "truffle-flattener": "^1.4.4"
   }
 }
-
